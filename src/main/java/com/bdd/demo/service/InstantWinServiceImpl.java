@@ -14,10 +14,6 @@ public class InstantWinServiceImpl implements InstantWinService {
     public Boolean isInstantWin(int storeId, int txnId) {
 
         InstantWin instantWin = iwRepositoryService.incrementCounter(storeId);
-        if (txnId == instantWin.getCounter()) {
-            return true;
-        } else {
-            return false;
-        }
+        return txnId == instantWin.getCounter();
     }
 }

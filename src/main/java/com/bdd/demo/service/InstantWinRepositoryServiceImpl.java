@@ -4,8 +4,6 @@ import com.bdd.demo.model.InstantWin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.AggregationUpdate;
-import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -24,22 +22,12 @@ public class InstantWinRepositoryServiceImpl implements InstantWinRepositoryServ
     @Override
     public InstantWin incrementCounter(int storeId) {
         Query query = new Query();
+        query.addCriteria(Criteria.where(STORE_ID).is(storeId));
+
         Update update = new Update();
         update.inc(COUNTER, 1);
-        query.addCriteria(Criteria.where(STORE_ID).is(storeId));
-//        Update update = new Update();
-
-        AggregationUpdate aggUpdate = AggregationUpdate
-                .update()
-                .set(COUNTER).toValue(ArithmeticOperators.valueOf(COUNTER).add(1));
-//
-//        UpdateResult result = mongoTemplate
-//                .update(InstantWin.class)
-//                .matching(query)
-//                .apply(aggUpdate).all();
 
         FindAndModifyOptions options = FindAndModifyOptions.options().returnNew(true).upsert(true);
         return mongoTemplate.findAndModify(query, update, options, InstantWin.class);
-//        return 1 == result.g;
     }
 }
